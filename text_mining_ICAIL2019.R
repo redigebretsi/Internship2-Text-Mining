@@ -12,7 +12,9 @@ library(Rgraphviz) # Correlation plots.
 library("stringr")
 library(udpipe)
 library(textrank)
-library("spacyr")
+library(tidyverse)
+library(tokenizers)
+
 library("quanteda") 
 
 #"C:/Users/redig/AppData/Local/Programs/Python/Python39/Lib/site-packages/spacy/util.py"
@@ -24,8 +26,6 @@ corpus <- Corpus(DirSource("~/R/DRPI Research Reports/Africa/Cameroon"), readerC
 
 # corpus <- Corpus(DirSource("~/R/data/decisions"), readerControl=list(reader=readPDF))
 
-parsedtxt <- spacy_parse(corpus[[1]]$content)
-parsedtxt
 
 text <- pdf_text("~/R/DRPI Research Reports/Africa/Cameroon")
 text2 <- strsplit(Corpus[1], "\n")
@@ -37,6 +37,8 @@ head(text2[[1]])
 corpus[[1]]$content
 x <- as.data.frame(corpus[[1]]$content)
 
+x
+
 win.graph(800, 600, 10)
 hist(nchar(corpus[[1]]$content), 2)
 
@@ -44,6 +46,7 @@ hist(nchar(corpus[[1]]$content), 2)
 corpus[[1]]$content[nchar(corpus[[1]]$content) < 1000] <- paste0(corpus[[1]]$content[nchar(corpus[[1]]$content) < 1000], "\n")
 txt <- paste(corpus[[1]]$content, collapse = " ")
 txt <- strsplit(txt, "\n")[[1]]
+txt
 
 grep("disability", txt, value = TRUE)
 
@@ -137,10 +140,14 @@ adtm <- removeSparseTerms(adtm, 0.3)
 
 
 # load('~/R/data/corpus_justice.rdata')
-
+sentences <- tokenize_sentences(corpus[[1]]$content)
+sentences
+par =  sentences[[1]][[1]]
+par
+x <- VCorpus(par)
 
 # Creation de la matrice termes-documents
-TDM = TermDocumentMatrix(corpus)
+TDM = TermDocumentMatrix(par)
 inspect(TDM)
 matrixDecision2Justice = as.matrix(TDM)
 # save(matrixDecision2Justice, file= '~/R/data/matrice_decision_de_justice.rdata')
